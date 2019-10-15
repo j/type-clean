@@ -12,15 +12,25 @@ export interface SubscriberMetadata {
   priority: number;
 }
 
+export interface SubscribersMetadata {
+  middleware: Map<Class<Command>, SubscriberMetadata[]>;
+  before: Map<Class<Command>, SubscriberMetadata[]>;
+  after: Map<Class<Command>, SubscriberMetadata[]>;
+}
+
 interface Metadata {
-  subscribers: Map<Class<Command>, SubscriberMetadata[]>;
+  subscribers: SubscribersMetadata;
 }
 
 export class MetadataStorage {
   public metadata: Metadata = {
-    subscribers: new Map()
+    subscribers: {
+      middleware: new Map(),
+      before: new Map(),
+      after: new Map()
+    }
   };
-  
+
   private constructor() {}
 
   static getInstance(): MetadataStorage {
@@ -32,7 +42,9 @@ export class MetadataStorage {
   }
 
   public clear() {
-    this.metadata.subscribers.clear();
+    this.metadata.subscribers.middleware.clear();
+    this.metadata.subscribers.before.clear();
+    this.metadata.subscribers.after.clear();
   }
 }
 

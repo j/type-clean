@@ -4,7 +4,14 @@
   "version": "0.0.0-preview",
   "main": "lib/index.js",
   "license": "MIT",
-  "keywords": ["nodejs", "typescript", "ddd", "cqrs", "clean", "architecture"],
+  "keywords": [
+    "nodejs",
+    "typescript",
+    "ddd",
+    "cqrs",
+    "clean",
+    "architecture"
+  ],
   "author": "Jordan <j@jrdn.org>",
   "scripts": {
     "test": "jest",
@@ -17,6 +24,7 @@
   "devDependencies": {
     "@types/jest": "^24.0.19",
     "husky": ">=1",
+    "inversify": "^5.0.1",
     "jest": "^24.9.0",
     "lint-staged": ">=8",
     "prettier": "^1.18.2",
@@ -35,9 +43,13 @@
     "testEnvironment": "node",
     "bail": true
   },
+  "prettier": {
+    "singleQuote": true
+  },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "pre-push": "yarn check"
     }
   },
   "lint-staged": {

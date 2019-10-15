@@ -1,29 +1,54 @@
 import { Class } from 'type-fest';
-import { storage, SubscriberMetadata } from '../metadata/MetadataStorage';
+import { storage, SubscriberMetadata, SubscribersMetadata } from '../metadata/MetadataStorage';
 import { Command } from '../command';
+import { Middleware } from 'src/utils/Middleware';
 
 interface OnOptions {
   priority?: number;
 }
 
-export function On(HandlerClass: Class<Command>, options: OnOptions = {}): MethodDecorator {
-  return (target: any, propertyKey: string | symbol, _descriptor: TypedPropertyDescriptor<any>): void => {
-    let subscribers: SubscriberMetadata[];
+function sortByPriority(arr: { priority: number }[]): void {
+  arr.sort((a, b) => (a.priority < b.priority) ? 1 : -1);
+}
 
-    if (storage.metadata.subscribers.has(HandlerClass)) {
-      subscribers = storage.metadata.subscribers.get(HandlerClass) as SubscriberMetadata[];
-    } else {
-      subscribers = [];
-      storage.metadata.subscribers.set(HandlerClass, subscribers);
+function addSubscriber(kind: keyof SubscribersMetadata, HandlerClass: Class<Command>, options: OnOptions = {}, SubscriberClass: any, propertyKey: string | symbol) {
+  let subscribers: SubscriberMetadata[];
+
+  if (storage.metadata.subscribers[kind].has(HandlerClass)) {
+    subscribers = storage.metadata.subscribers[kind].get(HandlerClass) as SubscriberMetadata[];
+  } else {
+    subscribers = [];
+    storage.metadata.subscribers[kind].set(HandlerClass, subscribers);
+  }
+
+  subscribers.push({
+    HandlerClass,
+    SubscriberClass,
+    method: propertyKey as string,
+    priority: typeof options.priority === 'number' ? options.priority : 0
+  });
+
+  sortByPriority(subscribers);
+}
+
+export function Use(HandlerClass: Class<Middleware>, options: OnOptions = {}): MethodDecorator {
+  return (target: any, propertyKey: string | symbol, _descriptor: TypedPropertyDescriptor<any>): void => {
+    if (propertyKey !== 'handle') {
+      throw new Error('@Use() can only be used on Commands.');
     }
 
-    subscribers.push({
-      HandlerClass,
-      SubscriberClass: target.constructor,
-      method: propertyKey as string,
-      priority: typeof options.priority === 'number' ? options.priority : subscribers.length + 1
-    });
+    addSubscriber('middleware', target.constructor, options, HandlerClass, 'use');
+  }
+}
 
-    subscribers.sort((a, b) => (a.priority > b.priority) ? 1 : -1);
+export function BeforeCommand(HandlerClass: Class<Command>, options: OnOptions = {}): MethodDecorator {
+  return (target: any, propertyKey: string | symbol, _descriptor: TypedPropertyDescriptor<any>): void => {
+    addSubscriber('before', HandlerClass, options, target.constructor, propertyKey);
+  }
+}
+
+export function AfterCommand(HandlerClass: Class<Command>, options: OnOptions = {}): MethodDecorator {
+  return (target: any, propertyKey: string | symbol, _descriptor: TypedPropertyDescriptor<any>): void => {
+    addSubscriber('after', HandlerClass, options, target.constructor, propertyKey);
   }
 }

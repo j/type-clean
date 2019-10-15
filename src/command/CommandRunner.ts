@@ -1,7 +1,11 @@
 import { Class } from 'type-fest';
 import { Container, DefaultContainer } from '../utils/container';
 import { Command } from './Command';
-import { storage, SubscriberMetadata } from '../metadata/MetadataStorage';
+import {
+  storage,
+  SubscriberMetadata,
+  SubscribersMetadata
+} from '../metadata/MetadataStorage';
 
 interface RunnerConfig {
   container?: Container;
@@ -22,27 +26,41 @@ export class CommandRunner {
   /**
    * Executes commands.
    */
-  async run<T extends Command>(Command: Class<T>, event: any): Promise<ReturnType<T['handle']>> {
-    const handler = this.container.get(Command);
+  async run<T extends Command>(
+    Command: Class<T>,
+    event?: any
+  ): Promise<ReturnType<T['handle']>> {
+    const command = this.container.get(Command);
 
-    if (!handler) {
-      throw new Error('Handler does not exist');
+    if (!command) {
+      throw new Error('Invalid handler');
     }
 
-    return this.emit(Command, await handler.handle(event));
+    await this.emit('middleware', Command, event);
+    await this.emit('before', Command, event);
+    const result = await command.handle(event);
+    await this.emit('after', Command, result);
+
+    return result;
   }
 
   /**
-   * Serially executes `@On(Handler)` decorated methods for the given `Handler`.
+   * Serially executes `@BeforeCommand(Handler)` or `@AfterCommand(Handler)` decorated methods for the given `Handler`.
    */
-  protected async emit<T extends Command>(HandlerClass: Class<T>, result: ReturnType<T['handle']>): Promise<ReturnType<T['handle']>> {
-    if (storage.metadata.subscribers.has(HandlerClass)) {
-      const subscribers = storage.metadata.subscribers.get(HandlerClass) as SubscriberMetadata[];
+  protected async emit<T extends Command>(
+    type: keyof SubscribersMetadata,
+    HandlerClass: Class<T>,
+    result: ReturnType<T['handle']>
+  ): Promise<void> {
+    if (storage.metadata.subscribers[type].has(HandlerClass)) {
+      const subscribers = storage.metadata.subscribers[type].get(
+        HandlerClass
+      ) as SubscriberMetadata[];
       for (const meta of subscribers) {
-        await this.container.get(meta.SubscriberClass)[meta.method](result, this);
+        await this.container
+          .get(meta.SubscriberClass)
+          [meta.method](result, this);
       }
     }
-
-    return result;
   }
 }
