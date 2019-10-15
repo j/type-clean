@@ -1,6 +1,7 @@
 {
   "name": "type-clean",
-  "version": "1.0.0",
+  "description": "A simple (& lightly opinionated) clean architecture framework.",
+  "version": "0.0.0-preview",
   "main": "lib/index.js",
   "license": "MIT",
   "keywords": ["nodejs", "typescript", "ddd", "cqrs", "clean", "architecture"],
