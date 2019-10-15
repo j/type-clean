@@ -1,0 +1,48 @@
+{
+  "name": "type-clean",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "keywords": ["nodejs", "typescript", "ddd", "cqrs", "clean", "architecture"],
+  "author": "Jordan <j@jrdn.org>",
+  "scripts": {
+    "test": "jest",
+    "clean": "rm -rf lib/",
+    "build": "tsc -b . --force",
+    "check": "tsc --noEmit",
+    "prepublishOnly": "yarn clean && yarn build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^24.0.19",
+    "husky": ">=1",
+    "jest": "^24.9.0",
+    "lint-staged": ">=8",
+    "prettier": "^1.18.2",
+    "reflect-metadata": "^0.1.13",
+    "ts-jest": "^24.1.0",
+    "ts-node-dev": "^1.0.0-pre.43",
+    "type-fest": "^0.8.1",
+    "typescript": "^3.6.4"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\](?!node-ts.+).+\\.ts$"
+    ],
+    "testRegex": "(src\\/.+\\.|/)(spec)\\.ts$",
+    "testEnvironment": "node",
+    "bail": true
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}
