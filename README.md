@@ -130,3 +130,7 @@ class CreateUserSubscriber {
   }
 }
 ```
+
+## Examples
+
+You can run examples by installing `ts-node` globally and running `ts-node examples/type-graphql`;
