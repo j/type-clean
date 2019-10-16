@@ -1,6 +1,6 @@
 import { Class } from 'type-fest';
 import { Container, DefaultContainer } from '../utils/container';
-import { Command } from './Command';
+import { Command, AbstractCommand } from './Command';
 import {
   storage,
   SubscriberMetadata,
@@ -28,9 +28,13 @@ export class CommandRunner {
    */
   async run<T extends Command>(
     Command: Class<T>,
-    event?: any
+    event?: Parameters<T['handle']>['0']
   ): Promise<ReturnType<T['handle']>> {
     const command = this.container.get(Command);
+
+    if (command instanceof AbstractCommand) {
+      command.setRunner(this);
+    }
 
     if (!command) {
       throw new Error('Invalid handler');

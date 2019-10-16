@@ -119,7 +119,7 @@ describe('CommandRunner', () => {
         updateState(Command.state.constructor, arguments);
       }
 
-      async handle(event: any): Promise<boolean> {
+      async handle(event: any): Promise<any> {
         updateState(Command.state.handle, arguments);
 
         return event;

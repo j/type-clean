@@ -1,5 +1,9 @@
 import { Class } from 'type-fest';
-import { storage, SubscriberMetadata, SubscribersMetadata } from '../metadata/MetadataStorage';
+import {
+  storage,
+  SubscriberMetadata,
+  SubscribersMetadata
+} from '../metadata/MetadataStorage';
 import { Command } from '../command';
 import { Middleware } from 'src/utils/Middleware';
 
@@ -8,14 +12,22 @@ interface OnOptions {
 }
 
 function sortByPriority(arr: { priority: number }[]): void {
-  arr.sort((a, b) => (a.priority < b.priority) ? 1 : -1);
+  arr.sort((a, b) => (a.priority < b.priority ? 1 : -1));
 }
 
-function addSubscriber(kind: keyof SubscribersMetadata, HandlerClass: Class<Command>, options: OnOptions = {}, SubscriberClass: any, propertyKey: string | symbol) {
+function addSubscriber(
+  kind: keyof SubscribersMetadata,
+  HandlerClass: Class<Command>,
+  options: OnOptions = {},
+  SubscriberClass: any,
+  propertyKey: string | symbol
+) {
   let subscribers: SubscriberMetadata[];
 
   if (storage.metadata.subscribers[kind].has(HandlerClass)) {
-    subscribers = storage.metadata.subscribers[kind].get(HandlerClass) as SubscriberMetadata[];
+    subscribers = storage.metadata.subscribers[kind].get(
+      HandlerClass
+    ) as SubscriberMetadata[];
   } else {
     subscribers = [];
     storage.metadata.subscribers[kind].set(HandlerClass, subscribers);
@@ -31,24 +43,63 @@ function addSubscriber(kind: keyof SubscribersMetadata, HandlerClass: Class<Comm
   sortByPriority(subscribers);
 }
 
-export function Use(HandlerClass: Class<Middleware>, options: OnOptions = {}): MethodDecorator {
-  return (target: any, propertyKey: string | symbol, _descriptor: TypedPropertyDescriptor<any>): void => {
+export function Use(
+  HandlerClass: Class<Middleware>,
+  options: OnOptions = {}
+): MethodDecorator {
+  return (
+    target: any,
+    propertyKey: string | symbol,
+    _descriptor: TypedPropertyDescriptor<any>
+  ): void => {
     if (propertyKey !== 'handle') {
       throw new Error('@Use() can only be used on Commands.');
     }
 
-    addSubscriber('middleware', target.constructor, options, HandlerClass, 'use');
-  }
+    addSubscriber(
+      'middleware',
+      target.constructor,
+      options,
+      HandlerClass,
+      'use'
+    );
+  };
 }
 
-export function BeforeCommand(HandlerClass: Class<Command>, options: OnOptions = {}): MethodDecorator {
-  return (target: any, propertyKey: string | symbol, _descriptor: TypedPropertyDescriptor<any>): void => {
-    addSubscriber('before', HandlerClass, options, target.constructor, propertyKey);
-  }
+export function BeforeCommand(
+  HandlerClass: Class<Command>,
+  options: OnOptions = {}
+): MethodDecorator {
+  return (
+    target: any,
+    propertyKey: string | symbol,
+    _descriptor: TypedPropertyDescriptor<any>
+  ): void => {
+    addSubscriber(
+      'before',
+      HandlerClass,
+      options,
+      target.constructor,
+      propertyKey
+    );
+  };
 }
 
-export function AfterCommand(HandlerClass: Class<Command>, options: OnOptions = {}): MethodDecorator {
-  return (target: any, propertyKey: string | symbol, _descriptor: TypedPropertyDescriptor<any>): void => {
-    addSubscriber('after', HandlerClass, options, target.constructor, propertyKey);
-  }
+export function AfterCommand(
+  HandlerClass: Class<Command>,
+  options: OnOptions = {}
+): MethodDecorator {
+  return (
+    target: any,
+    propertyKey: string | symbol,
+    _descriptor: TypedPropertyDescriptor<any>
+  ): void => {
+    addSubscriber(
+      'after',
+      HandlerClass,
+      options,
+      target.constructor,
+      propertyKey
+    );
+  };
 }
