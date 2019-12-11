@@ -4,10 +4,10 @@ import { ApolloServer } from 'apollo-server';
 import { buildSchema } from 'type-graphql';
 import { CommandRunner } from '../../src';
 import { RecipeResolver } from './recipes/resolvers/RecipeResolver';
-import { CreateRecipeCommand } from './recipes/commands/CreateRecipeCommand';
+import { CreateRecipeHandler } from './recipes/handlers/CreateRecipeHandler';
 import { RecipeRepository } from './recipes/repository/RecipeRepository';
-import { GetRecipesCommand } from './recipes/commands/GetRecipesCommand';
-import { NotifyCommand } from './recipes/commands/NotifyCommand';
+import { GetRecipesHandler } from './recipes/handlers/GetRecipesHandler';
+import { NotifyHandler } from './recipes/handlers/NotifyHandler';
 
 async function bootstrap() {
   // `skipBaseClassChecks` required for using `AbstractCommand`
@@ -15,9 +15,9 @@ async function bootstrap() {
   const runner = new CommandRunner({ container });
 
   container.bind(CommandRunner).toConstantValue(runner);
-  container.bind(CreateRecipeCommand).toSelf();
-  container.bind(GetRecipesCommand).toSelf();
-  container.bind(NotifyCommand).toSelf();
+  container.bind(CreateRecipeHandler).toSelf();
+  container.bind(GetRecipesHandler).toSelf();
+  container.bind(NotifyHandler).toSelf();
   container.bind(RecipeRepository).toSelf();
   container.bind(RecipeResolver).toSelf();
 

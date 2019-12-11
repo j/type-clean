@@ -1,12 +1,12 @@
 import { injectable } from 'inversify';
-import { AbstractCommand } from '../../../../src';
+import { AbstractCommandHandler } from '../../../../src';
 import { CreateRecipeInput } from '../inputs/CreateRecipeInput';
 import { Recipe } from '../models/Recipe';
 import { RecipeRepository } from '../repository/RecipeRepository';
-import { NotifyCommand } from './NotifyCommand';
+import { NotifyCommand } from './NotifyHandler';
 
 @injectable()
-export class CreateRecipeCommand extends AbstractCommand<
+export class CreateRecipeHandler extends AbstractCommandHandler<
   CreateRecipeInput,
   Recipe
 > {

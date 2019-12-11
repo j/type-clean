@@ -1,10 +1,10 @@
 import { injectable } from 'inversify';
-import { Command } from '../../../../src';
+import { CommandHandler } from '../../../../src';
 import { Recipe } from '../models/Recipe';
 import { RecipeRepository } from '../repository/RecipeRepository';
 
 @injectable()
-export class GetRecipesCommand implements Command {
+export class GetRecipesHandler implements CommandHandler {
   constructor(private repository: RecipeRepository) {}
 
   async handle(): Promise<Recipe[]> {
