@@ -1,5 +1,5 @@
 import { Class } from 'type-fest';
-import { Command } from '../command';
+import { CommandHandler } from '../command';
 
 declare var global: {
   __type_clean_metadata_storage__?: MetadataStorage;
@@ -13,9 +13,9 @@ export interface SubscriberMetadata {
 }
 
 export interface SubscribersMetadata {
-  middleware: Map<Class<Command>, SubscriberMetadata[]>;
-  before: Map<Class<Command>, SubscriberMetadata[]>;
-  after: Map<Class<Command>, SubscriberMetadata[]>;
+  middleware: Map<Class<CommandHandler>, SubscriberMetadata[]>;
+  before: Map<Class<CommandHandler>, SubscriberMetadata[]>;
+  after: Map<Class<CommandHandler>, SubscriberMetadata[]>;
 }
 
 interface Metadata {

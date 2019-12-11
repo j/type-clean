@@ -1,13 +1,13 @@
 import { Class } from 'type-fest';
 import { Container, DefaultContainer } from '../utils/container';
-import { Command, AbstractCommand } from './Command';
+import { CommandHandler, AbstractCommandHandler } from './CommandHandler';
 import {
   storage,
   SubscriberMetadata,
   SubscribersMetadata
 } from '../metadata/MetadataStorage';
 
-interface RunnerConfig {
+export interface CommandRunnerConfig {
   container?: Container;
 }
 
@@ -16,34 +16,37 @@ interface RunnerConfig {
  */
 export class CommandRunner {
   protected container: Container;
-  protected handlers: Map<Class<Command>, Command> = new Map();
-  protected subscribers: Map<Class<Command>, SubscriberMetadata> = new Map();
+  protected handlers: Map<Class<CommandHandler>, CommandHandler> = new Map();
+  protected subscribers: Map<
+    Class<CommandHandler>,
+    SubscriberMetadata
+  > = new Map();
 
-  constructor(config: RunnerConfig = {}) {
+  constructor(config: CommandRunnerConfig = {}) {
     this.container = config.container || new DefaultContainer();
   }
 
   /**
    * Executes commands.
    */
-  async run<T extends Command>(
-    Command: Class<T>,
-    event?: Parameters<T['handle']>['0']
+  async run<T extends CommandHandler>(
+    Handler: Class<T>,
+    event: Parameters<T['handle']>['0']
   ): Promise<ReturnType<T['handle']>> {
-    const command = this.container.get(Command);
+    const handler = this.container.get(Handler);
 
-    if (command instanceof AbstractCommand) {
-      command.setRunner(this);
+    if (handler instanceof AbstractCommandHandler) {
+      handler.setRunner(this);
     }
 
-    if (!command) {
+    if (!handler) {
       throw new Error('Invalid handler');
     }
 
-    await this.emit('middleware', Command, event);
-    await this.emit('before', Command, event);
-    const result = await command.handle(event);
-    await this.emit('after', Command, result);
+    await this.emit('middleware', Handler, event);
+    await this.emit('before', Handler, event);
+    const result = await handler.handle(event);
+    await this.emit('after', Handler, result);
 
     return result;
   }
@@ -51,7 +54,7 @@ export class CommandRunner {
   /**
    * Serially executes `@BeforeCommand(Handler)` or `@AfterCommand(Handler)` decorated methods for the given `Handler`.
    */
-  protected async emit<T extends Command>(
+  protected async emit<T extends CommandHandler>(
     type: keyof SubscribersMetadata,
     HandlerClass: Class<T>,
     result: ReturnType<T['handle']>

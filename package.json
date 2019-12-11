@@ -18,7 +18,8 @@
     "clean": "rm -rf lib/",
     "build": "tsc -b . --force",
     "check": "tsc --noEmit",
-    "prepublishOnly": "yarn clean && yarn build"
+    "prepublishOnly": "yarn clean && yarn build",
+    "pretty": "prettier 'src/**/*.ts' --write"
   },
   "dependencies": {},
   "devDependencies": {

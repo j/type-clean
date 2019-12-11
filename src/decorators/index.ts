@@ -4,7 +4,7 @@ import {
   SubscriberMetadata,
   SubscribersMetadata
 } from '../metadata/MetadataStorage';
-import { Command } from '../command';
+import { CommandHandler } from '../command';
 import { Middleware } from 'src/utils/Middleware';
 
 interface OnOptions {
@@ -17,7 +17,7 @@ function sortByPriority(arr: { priority: number }[]): void {
 
 function addSubscriber(
   kind: keyof SubscribersMetadata,
-  HandlerClass: Class<Command>,
+  HandlerClass: Class<CommandHandler>,
   options: OnOptions = {},
   SubscriberClass: any,
   propertyKey: string | symbol
@@ -67,7 +67,7 @@ export function Use(
 }
 
 export function BeforeCommand(
-  HandlerClass: Class<Command>,
+  HandlerClass: Class<CommandHandler>,
   options: OnOptions = {}
 ): MethodDecorator {
   return (
@@ -86,7 +86,7 @@ export function BeforeCommand(
 }
 
 export function AfterCommand(
-  HandlerClass: Class<Command>,
+  HandlerClass: Class<CommandHandler>,
   options: OnOptions = {}
 ): MethodDecorator {
   return (

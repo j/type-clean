@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Container, injectable, inject } from 'inversify';
 import { storage } from '../metadata/MetadataStorage';
-import { Command } from './Command';
+import { CommandHandler } from './CommandHandler';
 import { CommandRunner } from './CommandRunner';
 import { Use, AfterCommand, BeforeCommand } from '../decorators';
 import { Middleware } from 'src/utils/Middleware';
@@ -27,7 +27,7 @@ describe('CommandRunner', () => {
   });
 
   test('simple command', async () => {
-    class Simple implements Command {
+    class Simple implements CommandHandler {
       static state = {
         constructor: initState(),
         handle: initState()
@@ -60,7 +60,7 @@ describe('CommandRunner', () => {
   });
 
   test('single @AfterCommand() subscriber', async () => {
-    class Command implements Command {
+    class Command implements CommandHandler {
       static state = {
         constructor: initState(),
         handle: initState()
@@ -109,7 +109,7 @@ describe('CommandRunner', () => {
   });
 
   test('multiple @AfterCommand() subscribers with default priority', async () => {
-    class Command implements Command {
+    class Command implements CommandHandler {
       static state = {
         constructor: initState(),
         handle: initState()
@@ -187,7 +187,7 @@ describe('CommandRunner', () => {
       }
     }
 
-    class MyCommand implements Command {
+    class MyCommand implements CommandHandler {
       @Use(ValidateCommand)
       async handle(event: any): Promise<boolean> {
         return event;
@@ -248,7 +248,7 @@ describe('CommandRunner', () => {
       email: string;
     }
 
-    class CreateUser implements Command {
+    class CreateUser implements CommandHandler {
       async handle(fields: Partial<User>): Promise<User> {
         calls.push({ name: 'CreateUser', args: [...arguments] });
 
@@ -256,7 +256,7 @@ describe('CommandRunner', () => {
       }
     }
 
-    class UserSubscribe implements Command {
+    class UserSubscribe implements CommandHandler {
       async handle(email: string): Promise<string> {
         calls.push({ name: 'UserSubscribe', args: [...arguments] });
 
@@ -264,7 +264,7 @@ describe('CommandRunner', () => {
       }
     }
 
-    class SendEmail implements Command {
+    class SendEmail implements CommandHandler {
       async handle(email: string): Promise<string> {
         calls.push({ name: 'SendEmail', args: [...arguments] });
 
@@ -407,7 +407,7 @@ describe('CommandRunner', () => {
       container
     });
 
-    const result = await runner.run(GetUserCommand);
+    const result = await runner.run(GetUserCommand, undefined);
 
     expect(result).toBeInstanceOf(User);
     expect(log).toHaveBeenCalledTimes(1);
