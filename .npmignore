@@ -1,0 +1,7 @@
+src
+README.md
+tsconfig.json
+tslint.json
+*.spec.ts
+*.test.ts
+.prettierrc

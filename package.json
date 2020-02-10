@@ -1,8 +1,10 @@
 {
   "name": "type-clean",
   "description": "A simple (& lightly opinionated) clean architecture framework.",
-  "version": "0.0.1-beta1",
+  "version": "0.0.1-beta2",
+  "files": ["lib/**/*"],
   "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "license": "MIT",
   "keywords": [
     "nodejs",
