@@ -4,7 +4,7 @@ import { storage } from '../metadata/MetadataStorage';
 import { CommandHandler } from './CommandHandler';
 import { CommandRunner } from './CommandRunner';
 import { Use, AfterCommand, BeforeCommand } from '../decorators';
-import { Middleware } from 'src/utils/Middleware';
+import { Middleware } from '../utils/Middleware';
 
 interface ClassTestState {
   calls: number;

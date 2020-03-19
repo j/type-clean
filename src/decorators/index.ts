@@ -5,7 +5,7 @@ import {
   SubscribersMetadata
 } from '../metadata/MetadataStorage';
 import { CommandHandler } from '../command';
-import { Middleware } from 'src/utils/Middleware';
+import { Middleware } from '../utils/Middleware';
 
 interface OnOptions {
   priority?: number;
