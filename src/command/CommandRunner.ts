@@ -6,6 +6,7 @@ import {
   SubscriberMetadata,
   SubscribersMetadata
 } from '../metadata/MetadataStorage';
+import { isPromise } from '../utils/isPromise';
 
 export interface CommandRunnerConfig {
   container?: Container;
@@ -33,7 +34,11 @@ export class CommandRunner {
     Handler: Class<T>,
     event: Parameters<T['handle']>['0']
   ): Promise<ReturnType<T['handle']>> {
-    const handler = this.container.get(Handler);
+    let handler = this.container.get(Handler);
+
+    if (isPromise(handler)) {
+      handler = await handler;
+    }
 
     if (handler instanceof AbstractCommandHandler) {
       handler.setRunner(this);

@@ -413,4 +413,27 @@ describe('CommandRunner', () => {
     expect(log).toHaveBeenCalledTimes(1);
     expect(log).toHaveBeenCalledWith('Hello, John Doe');
   });
+
+  it('allows async containers', async () => {
+    class MyCommand implements CommandHandler {
+      async handle(event: any): Promise<boolean> {
+        return event;
+      }
+
+      static async create(): Promise<MyCommand> {
+        return new MyCommand();
+      }
+    }
+
+    const runner = new CommandRunner({
+      container: {
+        get: async (Cls: any) => {
+          return Cls.create();
+        }
+      }
+    });
+
+    const result = await runner.run(MyCommand, { foo: 'bar' });
+    expect(result).toEqual({ foo: 'bar' });
+  });
 });
