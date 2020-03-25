@@ -34,11 +34,10 @@ export class CommandRunner {
     Handler: Class<T>,
     event: Parameters<T['handle']>['0']
   ): Promise<ReturnType<T['handle']>> {
-    let handler = this.container.get(Handler);
-
-    if (isPromise(handler)) {
-      handler = await handler;
-    }
+    const handlerOrPromise = this.container.get(Handler);
+    const handler = isPromise(handlerOrPromise)
+      ? await handlerOrPromise
+      : handlerOrPromise;
 
     if (handler instanceof AbstractCommandHandler) {
       handler.setRunner(this);
