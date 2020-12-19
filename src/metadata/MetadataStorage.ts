@@ -1,5 +1,6 @@
-import { Class } from 'type-fest';
 import { CommandHandler } from '../command';
+
+import type { Class } from 'type-fest';
 
 declare var global: {
   __type_clean_metadata_storage__?: MetadataStorage;
@@ -27,8 +28,8 @@ export class MetadataStorage {
     subscribers: {
       middleware: new Map(),
       before: new Map(),
-      after: new Map()
-    }
+      after: new Map(),
+    },
   };
 
   private constructor() {}

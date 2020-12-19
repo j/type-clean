@@ -1,11 +1,12 @@
-import { Class } from 'type-fest';
 import {
   storage,
   SubscriberMetadata,
-  SubscribersMetadata
+  SubscribersMetadata,
 } from '../metadata/MetadataStorage';
 import { CommandHandler } from '../command';
 import { Middleware } from '../utils/Middleware';
+
+import type { Class } from 'type-fest';
 
 interface OnOptions {
   priority?: number;
@@ -37,7 +38,7 @@ function addSubscriber(
     HandlerClass,
     SubscriberClass,
     method: propertyKey as string,
-    priority: typeof options.priority === 'number' ? options.priority : 0
+    priority: typeof options.priority === 'number' ? options.priority : 0,
   });
 
   sortByPriority(subscribers);

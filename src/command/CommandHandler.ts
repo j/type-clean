@@ -1,5 +1,6 @@
-import { Class } from 'type-fest';
 import { CommandRunner } from './CommandRunner';
+
+import type { Class } from 'type-fest';
 
 export interface CommandHandler<T1 = any, T2 = any> {
   handle: (event: T1) => Promise<T2>;
@@ -7,7 +8,7 @@ export interface CommandHandler<T1 = any, T2 = any> {
 
 export abstract class AbstractCommandHandler<T1 = any, T2 = any>
   implements CommandHandler<T1, T2> {
-  abstract async handle(event: T1): Promise<T2>;
+  abstract handle(event: T1): Promise<T2>;
 
   private runner: CommandRunner;
 

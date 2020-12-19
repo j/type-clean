@@ -13,7 +13,7 @@ interface ClassTestState {
 
 const initState = (): ClassTestState => ({
   calls: 0,
-  args: []
+  args: [],
 });
 
 const updateState = (obj: ClassTestState, args: any) => {
@@ -30,7 +30,7 @@ describe('CommandRunner', () => {
     class Simple implements CommandHandler {
       static state = {
         constructor: initState(),
-        handle: initState()
+        handle: initState(),
       };
 
       constructor() {
@@ -63,7 +63,7 @@ describe('CommandRunner', () => {
     class Command implements CommandHandler {
       static state = {
         constructor: initState(),
-        handle: initState()
+        handle: initState(),
       };
 
       constructor() {
@@ -80,7 +80,7 @@ describe('CommandRunner', () => {
     class CommandSubscriber {
       static state = {
         constructor: initState(),
-        onCommand: initState()
+        onCommand: initState(),
       };
 
       constructor() {
@@ -104,7 +104,7 @@ describe('CommandRunner', () => {
     expect(CommandSubscriber.state.constructor.args).toEqual([[]]);
     expect(CommandSubscriber.state.onCommand.calls).toBe(1);
     expect(CommandSubscriber.state.onCommand.args).toStrictEqual([
-      [event, runner]
+      [event, runner],
     ]);
   });
 
@@ -112,7 +112,7 @@ describe('CommandRunner', () => {
     class Command implements CommandHandler {
       static state = {
         constructor: initState(),
-        handle: initState()
+        handle: initState(),
       };
 
       constructor() {
@@ -129,7 +129,7 @@ describe('CommandRunner', () => {
     class CommandSubscriber1 {
       static state = {
         constructor: initState(),
-        onCommand: initState()
+        onCommand: initState(),
       };
 
       constructor() {
@@ -145,7 +145,7 @@ describe('CommandRunner', () => {
     class CommandSubscriber2 {
       static state = {
         constructor: initState(),
-        onCommand: initState()
+        onCommand: initState(),
       };
 
       constructor() {
@@ -170,13 +170,13 @@ describe('CommandRunner', () => {
     expect(CommandSubscriber1.state.constructor.args).toEqual([[]]);
     expect(CommandSubscriber1.state.onCommand.calls).toBe(1);
     expect(CommandSubscriber1.state.onCommand.args).toStrictEqual([
-      [event, runner]
+      [event, runner],
     ]);
     expect(CommandSubscriber2.state.constructor.calls).toBe(1);
     expect(CommandSubscriber2.state.constructor.args).toEqual([[]]);
     expect(CommandSubscriber2.state.onCommand.calls).toBe(1);
     expect(CommandSubscriber2.state.onCommand.args).toStrictEqual([
-      [event, runner]
+      [event, runner],
     ]);
   });
 
@@ -237,7 +237,7 @@ describe('CommandRunner', () => {
     expect(calls).toStrictEqual([
       'CommandSubscriber3',
       'CommandSubscriber2',
-      'CommandSubscriber1'
+      'CommandSubscriber1',
     ]);
   });
 
@@ -286,7 +286,7 @@ describe('CommandRunner', () => {
       async onCreateUser(user: User, runner: CommandRunner): Promise<void> {
         calls.push({
           name: 'CreateUserSubscriber.onCreateUser',
-          args: [...arguments]
+          args: [...arguments],
         });
         await runner.run(UserSubscribe, user.email);
       }
@@ -314,28 +314,28 @@ describe('CommandRunner', () => {
     expect(calls).toStrictEqual([
       {
         name: 'CreateUserSubscriber.lowercase',
-        args: [{ email: 'JOHN@DOE.COM' }, runner]
+        args: [{ email: 'JOHN@DOE.COM' }, runner],
       },
       {
         name: 'CreateUser',
-        args: [{ email: 'john@doe.com' }]
+        args: [{ email: 'john@doe.com' }],
       },
       {
         name: 'CreateUserSubscriber.onCreateUser',
-        args: [user, runner]
+        args: [user, runner],
       },
       {
         name: 'UserSubscribe',
-        args: ['john@doe.com']
+        args: ['john@doe.com'],
       },
       {
         name: 'OnUserSubscribe',
-        args: ['john@doe.com', runner]
+        args: ['john@doe.com', runner],
       },
       {
         name: 'SendEmail',
-        args: ['john@doe.com']
-      }
+        args: ['john@doe.com'],
+      },
     ]);
   });
 
@@ -386,25 +386,13 @@ describe('CommandRunner', () => {
     }
 
     const container = new Container();
-    container
-      .bind(Logger)
-      .toSelf()
-      .inSingletonScope();
-    container
-      .bind(UserRepository)
-      .toSelf()
-      .inSingletonScope();
-    container
-      .bind(GetUserCommand)
-      .toSelf()
-      .inSingletonScope();
-    container
-      .bind(OnGetUser)
-      .toSelf()
-      .inSingletonScope();
+    container.bind(Logger).toSelf().inSingletonScope();
+    container.bind(UserRepository).toSelf().inSingletonScope();
+    container.bind(GetUserCommand).toSelf().inSingletonScope();
+    container.bind(OnGetUser).toSelf().inSingletonScope();
 
     const runner = new CommandRunner({
-      container
+      container,
     });
 
     const result = await runner.run(GetUserCommand, undefined);
@@ -429,8 +417,8 @@ describe('CommandRunner', () => {
       container: {
         get: async (Cls: any) => {
           return Cls.create();
-        }
-      }
+        },
+      },
     });
 
     const result = await runner.run(MyCommand, { foo: 'bar' });

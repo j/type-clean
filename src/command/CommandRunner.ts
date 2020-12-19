@@ -1,12 +1,13 @@
-import { Class } from 'type-fest';
 import { Container, DefaultContainer } from '../utils/container';
 import { CommandHandler, AbstractCommandHandler } from './CommandHandler';
 import {
   storage,
   SubscriberMetadata,
-  SubscribersMetadata
+  SubscribersMetadata,
 } from '../metadata/MetadataStorage';
 import { isPromise } from '../utils/isPromise';
+
+import type { Class } from 'type-fest';
 
 export interface CommandRunnerConfig {
   container?: Container;
