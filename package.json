@@ -24,6 +24,8 @@
     "build": "tsc -b . --force",
     "check": "tsc --noEmit",
     "prepublishOnly": "yarn clean && yarn build",
+    "release:next": "npm publish --access public --tag next",
+    "release": "release-it",
     "pretty": "prettier 'src/**/*.ts' --write"
   },
   "dependencies": {},
@@ -38,6 +40,7 @@
     "lint-staged": ">=8",
     "prettier": "^2.2.1",
     "reflect-metadata": "^0.1.13",
+    "release-it": "^14.2.2",
     "ts-jest": "^26.4.4",
     "ts-node-dev": "^1.1.1",
     "type-fest": "^0.8.1",
