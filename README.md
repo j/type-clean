@@ -1,3 +1,7 @@
+### I'm currently using this with decent volume in production.  When I feel it's proven to be fully stable, I'll mark a "stable" veresion of this library.  Until then, my commits & NPM publishes may not be up to date.  Feel free to contribute / mark issues or feature requests.  Star this and I'll most likely go through each project with the most interest to stabilize and clean up.
+
+Other notes: I'll most likely remove the events in favor of allowing people to just use my `type-events` library.  It's felt better for me so far.
+
 <h1 align="center" style="border-bottom: none;">type-clean</h1>
 <h3 align="center">A simple (& lightly opinionated) clean architecture framework.</h3>
 
