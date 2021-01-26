@@ -1,11 +1,15 @@
-### I'm currently using this with decent volume in production.  When I feel it's proven to be fully stable, I'll mark a "stable" veresion of this library.  Until then, my commits & NPM publishes may not be up to date.  Feel free to contribute / mark issues or feature requests.  Star this and I'll most likely go through each project with the most interest to stabilize and clean up.
-
-Other notes: I'll most likely remove the events in favor of allowing people to just use my `type-events` library.  It's felt better for me so far.
-
 <h1 align="center" style="border-bottom: none;">type-clean</h1>
-<h3 align="center">A simple (& lightly opinionated) clean architecture framework.</h3>
+<p align="center">A simple (& lightly opinionated) clean architecture framework.</p>
 
-**type-clean** tries to be nothing special.  It provides a simple and clean way of running and scribing to commands/use-cases.
+<p align="center">
+    <a href="https://www.npmjs.com/~jrdn" target="_blank"><img src="https://img.shields.io/npm/v/type-clean.svg" alt="NPM Version" /></a>
+    <a href="https://www.npmjs.com/~jrdn" target="_blank"><img src="https://img.shields.io/npm/l/type-clean.svg" alt="Package License" /></a>
+    <a href="https://www.npmjs.com/~jrdn" target="_blank"><img src="https://img.shields.io/npm/dm/type-clean.svg" alt="NPM Downloads" /></a>
+</p>
+
+## Description
+
+`type-clean` provides a simple and clean way of running commands / "use-cases" and acting (subscribers) upon them.
 
 ## Installation
 
@@ -18,6 +22,7 @@ or
 ```
 npm install type-clean
 ```
+
 
 ## Usage
 
@@ -129,7 +134,7 @@ class CreateUserSubscriber {
   }
 
   @AfterCommand(CreateUserCommand)
-  async afterCreateUser(user: User) {
+  async afterCreateUser(_input: CreateUserInput, user: User) {
     console.log(`Created user ${user.id}`);
   }
 }
@@ -137,4 +142,22 @@ class CreateUserSubscriber {
 
 ## Examples
 
-You can run examples by installing `ts-node` globally and running `ts-node examples/type-graphql`;
+You can run examples by installing `ts-node` globally and running `ts-node examples/type-graphql`.
+
+## Usage in Nest.js
+
+Check out [nestjs-type-clean](https://github.com/j/nestjs-type-clean).
+
+## Test
+
+```bash
+$ yarn test
+```
+
+## Stay in touch
+
+- Author - [Jordan Stout](https://github.com/j)
+
+## License
+
+`type-clean` is [MIT licensed](LICENSE).
