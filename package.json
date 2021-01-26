@@ -68,5 +68,11 @@
     "*.ts": [
       "prettier --write"
     ]
+  },
+  "release-it": {
+    "commitMessage": "chore: release v${version}",
+    "github": {
+      "release": true
+    }
   }
 }
