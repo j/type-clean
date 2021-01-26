@@ -48,10 +48,10 @@ export class CommandRunner {
       throw new Error('Invalid handler');
     }
 
-    await this.emit('middleware', Handler, event);
-    await this.emit('before', Handler, event);
+    await this.emit('middleware', Handler, [event]);
+    await this.emit('before', Handler, [event]);
     const result = await handler.handle(event);
-    await this.emit('after', Handler, result);
+    await this.emit('after', Handler, [event, result]);
 
     return result;
   }
@@ -62,16 +62,18 @@ export class CommandRunner {
   protected async emit<T extends CommandHandler>(
     type: keyof SubscribersMetadata,
     HandlerClass: Class<T>,
-    result: ReturnType<T['handle']>
+    args: any[]
   ): Promise<void> {
     if (storage.metadata.subscribers[type].has(HandlerClass)) {
       const subscribers = storage.metadata.subscribers[type].get(
         HandlerClass
       ) as SubscriberMetadata[];
+
+      args.push(this);
+
       for (const meta of subscribers) {
-        await this.container
-          .get(meta.SubscriberClass)
-          [meta.method](result, this);
+        const subscriber = this.container.get(meta.SubscriberClass);
+        await subscriber[meta.method].apply(subscriber, args);
       }
     }
   }

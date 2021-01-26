@@ -73,7 +73,7 @@ describe('CommandRunner', () => {
       async handle(event: any): Promise<any> {
         updateState(Command.state.handle, arguments);
 
-        return event;
+        return event.result;
       }
     }
 
@@ -88,14 +88,19 @@ describe('CommandRunner', () => {
       }
 
       @AfterCommand(Command)
-      async onCommand(_result: boolean, _runner: CommandRunner): Promise<void> {
+      async onCommand(
+        _event: any,
+        _result: boolean,
+        _runner: CommandRunner
+      ): Promise<void> {
         updateState(CommandSubscriber.state.onCommand, arguments);
       }
     }
 
     const runner = new CommandRunner();
-    const event = {};
-    expect(await runner.run(Command, event)).toBe(event);
+    const result = { foo: 'bar' };
+    const event = { result };
+    expect(await runner.run(Command, event)).toBe(result);
     expect(Command.state.constructor.calls).toBe(1);
     expect(Command.state.constructor.args).toEqual([[]]);
     expect(Command.state.handle.calls).toBe(1);
@@ -104,7 +109,7 @@ describe('CommandRunner', () => {
     expect(CommandSubscriber.state.constructor.args).toEqual([[]]);
     expect(CommandSubscriber.state.onCommand.calls).toBe(1);
     expect(CommandSubscriber.state.onCommand.args).toStrictEqual([
-      [event, runner],
+      [event, result, runner],
     ]);
   });
 
@@ -170,13 +175,13 @@ describe('CommandRunner', () => {
     expect(CommandSubscriber1.state.constructor.args).toEqual([[]]);
     expect(CommandSubscriber1.state.onCommand.calls).toBe(1);
     expect(CommandSubscriber1.state.onCommand.args).toStrictEqual([
-      [event, runner],
+      [event, event, runner],
     ]);
     expect(CommandSubscriber2.state.constructor.calls).toBe(1);
     expect(CommandSubscriber2.state.constructor.args).toEqual([[]]);
     expect(CommandSubscriber2.state.onCommand.calls).toBe(1);
     expect(CommandSubscriber2.state.onCommand.args).toStrictEqual([
-      [event, runner],
+      [event, event, runner],
     ]);
   });
 
@@ -283,7 +288,11 @@ describe('CommandRunner', () => {
       }
 
       @AfterCommand(CreateUser)
-      async onCreateUser(user: User, runner: CommandRunner): Promise<void> {
+      async onCreateUser(
+        _fields: Partial<User>,
+        user: User,
+        runner: CommandRunner
+      ): Promise<void> {
         calls.push({
           name: 'CreateUserSubscriber.onCreateUser',
           args: [...arguments],
@@ -296,12 +305,13 @@ describe('CommandRunner', () => {
     class OnUserSubscribe {
       @AfterCommand(UserSubscribe)
       async onUserSubscribe(
-        email: string,
+        _event: string,
+        result: string,
         runner: CommandRunner
       ): Promise<void> {
         calls.push({ name: 'OnUserSubscribe', args: [...arguments] });
 
-        await runner.run(SendEmail, email);
+        await runner.run(SendEmail, result);
       }
     }
 
@@ -322,7 +332,7 @@ describe('CommandRunner', () => {
       },
       {
         name: 'CreateUserSubscriber.onCreateUser',
-        args: [user, runner],
+        args: [{ email: 'john@doe.com' }, user, runner],
       },
       {
         name: 'UserSubscribe',
@@ -330,7 +340,7 @@ describe('CommandRunner', () => {
       },
       {
         name: 'OnUserSubscribe',
-        args: ['john@doe.com', runner],
+        args: ['john@doe.com', 'john@doe.com', runner],
       },
       {
         name: 'SendEmail',
@@ -380,7 +390,7 @@ describe('CommandRunner', () => {
       constructor(@inject(Logger) private logger: Logger) {}
 
       @AfterCommand(GetUserCommand)
-      async onGetUser(user: User): Promise<void> {
+      async onGetUser(_event: undefined, user: User): Promise<void> {
         this.logger.log(`Hello, ${user.name}`);
       }
     }
